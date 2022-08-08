@@ -6,18 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>猜數字遊戲</title>
-	
+
     <style>
-		.container{
-		width:350px;
-		margin:auto;
-		margin-top:50px;
-		}
+
     </style>
 </head>
 
 <body>
-	<div class="container">
+
     <h1>猜數字:</h1>
     <h2 id="word">請點擊下方按鈕開始遊戲</h2>
     <input type="text" id="number" value="0" oninput="value=value.replace(/[^\d]/g,'')">
@@ -25,7 +21,6 @@
     <button onclick="game_star()">開始新遊戲(r)</button>
     <button onclick="showAns()" id="showAns">點我提示</button>
     <a target="_blank" href="game_one.html"><button>點我開啟新分頁進行遊戲</button></a>
-	<div>
 </body>
 
 
