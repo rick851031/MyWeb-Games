@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻牌練習</title>
+    <style>
+        .container {
+            margin: auto;
+            width: 438px;
+            height: 400px;
+            border: 1px solid black;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: red;
+            text-align: center;
+        }
+
+        p {
+            line-height: 20px;
+        }
+
+        .img_all {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            justify-content: space-around;
+            align-content: center;
+        }
+
+        img {
+            width: 16.66%;
+        }
+
+        .container2 {
+            text-align: center;
+        }
+
+        #timer {
+            width: 30px;
+        }
+
+        @media screen and (max-width:768px) {
+            .container {
+                width: 250px;
+                height: 515px;
+            }
+
+            img {
+                width: 25%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>記憶翻牌</h1>
+    <div class="container">
+        <p>
+            1.請先點擊下面的『開始新的一局』按鈕開始遊戲。<br>
+            2.一開始會給五秒的記憶時間,結束後蓋牌並開始計時。<br>
+            3.連續翻起的兩張牌均相同，則可取走此兩張牌，否則電腦會自動蓋回，直到所有牌均取完為止。<br>
+        </p>
+        <div class="img_all">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+            <img alt="">
+        </div>
+    </div>
+    <div class="container2">
+        <input type="button" id="start" value="開始新的一局">
+        你一共使用<input type="text" id="timer" value="0" disabled>秒
+    </div>
+
+
+    <script>
+        let img_all = document.getElementsByClassName('img_all')[0].getElementsByTagName('img');//檯面上24張牌
+        let img_box = document.getElementsByClassName('img_all')[0];//圖片盒子
+        let start = document.getElementById('start');//開始鍵
+        let txtp = document.getElementsByTagName('p')[0];//說明文字
+        var cards_two = [];//兩張卡片比對區
+        var cards_state = 0;//判斷是否比完
+        var timer = document.getElementById('timer');//時間
+        let cards_all = [];//卡片盒 抽取有哪些花色(12張)
+        let cards_box = [];//要使用的卡片(12*2張)
+        var counter = function () { timer.value++; } //計時
+        var timer00;
+        var fiveSec;
+
+        start.onclick = function () {
+            //數值回歸
+            cards_two = [];
+            cards_state = 0;
+            cards_all = [];
+            cards_box = [];
+            cards_state = 0;
+            timer.value = 0;
+            if (timer00) {
+                clearInterval(timer00);
+            }
+            if (fiveSec) {
+                clearTimeout(fiveSec);
+            }
+
+            //文字消失
+            txtp.style.display = 'none';
+            //隨機亂數
+            function random52() {
+                var number = Math.floor(Math.random() * 52)
+                return number;
+            }
+            function random24() {
+                var number = Math.floor(Math.random() * 24)
+                return number;
+            }
+            //把牌放進去
+            for (var i = 0; i < 52; i++) {
+                cards_all.push('g' + i + '.jpg');
+            }
+            //洗牌
+            for (var i = 0; i < 1000; i++) {
+                var box;
+                var j = random52();
+                box = cards_all[0];
+                cards_all[0] = cards_all[j];
+                cards_all[j] = box;
+            }
+            //抽出要用的牌再洗牌
+            for (var i = 0; i < 12; i++) {
+                cards_box.push(cards_all[i]);
+                cards_box.push(cards_all[i]);
+            }
+            for (var i = 0; i < 1000; i++) {
+                var box;
+                var j = random24();
+                box = cards_box[0];
+                cards_box[0] = cards_box[j];
+                cards_box[j] = box;
+            }
+
+            //發牌
+            for (i = 0; i < img_all.length; i++) {
+                img_all[i].src = '../images/poker/' + cards_box[i]
+            }
+
+            //5秒後蓋牌並開始計時
+            fiveSec = setTimeout(function () {
+                for (var i = 0; i < img_all.length; i++) {
+                    img_all[i].src = '../images/poker/g52.jpg';
+                }
+                timer00 = setInterval(counter, 1000);
+            }, 5000)
+
+            //翻牌設定
+            for (var i = 0; i < img_all.length; i++) {
+                img_all[i].index = i;
+                img_all[i].state = 0;
+                img_all[i].onclick = function img_click() {
+                    img_all[this.index].src = '../images/poker/' + cards_box[this.index];
+                    cards_two.push(cards_box[this.index])
+                    img_all[this.index].state = 1;
+                    img_all[this.index].onclick = '';
+
+                    if (cards_two.length == 2 && cards_two[0] == cards_two[1]) {
+                        for (var j = 0; j < img_all.length; j++) {
+                            if (img_all[j].state == 1) {
+                                img_all[j].state = 2;
+                                cards_two = [];
+                                cards_state++;
+                                if (cards_state == 24) {
+                                    clearInterval(timer00)
+                                    setTimeout(function () { alert('恭喜完成遊戲，你花費了' + timer.value + '秒') }, 50);
+
+                                }
+                            }
+                        }
+                    }
+                    else if (cards_two.length == 2 && cards_two[0] !== cards_two[1]) {
+                        cards_two = [];
+                        for (var j = 0; j < img_all.length; j++) {
+                            img_all[j].onclick = '';
+                        }
+
+                        setTimeout(function () {
+                            for (var i = 0; i < img_all.length; i++) {
+                                if (img_all[i].state == 1 || img_all[i].state == 0) {
+                                    img_all[i].state = 0;
+                                    img_all[i].src = '../images/poker/g52.jpg';
+                                    img_all[i].onclick = img_click;
+                                }
+                            }
+                        }, 1000)
+
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+
+</html>

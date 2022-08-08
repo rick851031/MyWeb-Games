@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜數字遊戲</title>
+	
+    <style>
+		.container{
+		width:350px;
+		margin:auto;
+		margin-top:50px;
+		}
+    </style>
+</head>
+
+<body>
+	<div class="container">
+    <h1>猜數字:</h1>
+    <h2 id="word">請點擊下方按鈕開始遊戲</h2>
+    <input type="text" id="number" value="0" oninput="value=value.replace(/[^\d]/g,'')">
+    <button onclick="enter()" style="margin:20px ;" id="enterNumber">輸入數字(enter)</button><br>
+    <button onclick="game_star()">開始新遊戲(r)</button>
+    <button onclick="showAns()" id="showAns">點我提示</button>
+    <a target="_blank" href="game_one.html"><button>點我開啟新分頁進行遊戲</button></a>
+	<div>
+</body>
+
+
+<script>
+
+    //初始設定
+    var enterNumber = document.getElementById('enterNumber');
+    var text_number = document.getElementById('number')
+    var word = document.getElementById('word');
+    var a = 0;
+    var b = 100;
+    var ans = '';
+    var number;
+
+
+
+    //開啟新遊戲
+    function game_star() {
+        a = 0;
+        b = 100;
+        ans = Math.floor(Math.random() * 98 + 1);
+        word.innerHTML = '請開始猜' + a + '到' + b + '的數字';
+        enterNumber.disabled = false;
+        text_number.disabled = false;
+        document.getElementById('showAns').disabled = false;
+    }
+
+    //按下r開始新遊戲
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode == 82) {
+            game_star();
+            text_number.value = '';
+        }
+    })
+
+
+
+    //輸入數字
+    function enter() {
+        number = Number(document.getElementById('number').value);
+        if (ans == '') {//先判斷是否已開局
+            word.innerHTML = '請先開始新的一局'
+        }
+        else if (number >= b || number <= a) {//再判斷是否數字在範圍內
+            word.innerHTML = '請開始猜' + a + '到' + b + '的數字，不要亂打';
+        } else {
+            if (number < ans) {
+                a = number;
+                word.innerHTML = '請開始猜' + a + '到' + b + '的數字';
+            } else if (number > ans) {
+                b = number;
+                word.innerHTML = '請開始猜' + a + '到' + b + '的數字';
+            } else if (number == ans) {
+                word.innerHTML = '恭喜答對了'
+                enterNumber.disabled = true;
+                text_number.disabled = true;
+                document.getElementById('showAns').disabled = true;
+
+            }
+        }
+        text_number.value = '';
+    
+    
+    
+    
+    }
+
+    text_number.addEventListener('keydown', function (e) {
+        if (e.keyCode == 13)
+            enter();
+    }
+    )
+
+    //提示
+    function showAns() {
+        if (ans == '') {
+            word.innerHTML = '請先開始新的一局'
+        } else {
+            word.innerHTML = '請開始猜' + a + '到' + b + '的數字，答案在這裡→→→' + '<span style="font-size:1px;opacity: 0.2;">' + ans + '</span>';
+        }
+    }
+
+    
+
+</script>
+</body>
+
+</html>
