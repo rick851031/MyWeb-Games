@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>貓狗大戰</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS v5.2.0-beta1 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+        .container {
+            width: 800px;
+            height: 500px;
+            border: 1px solid black;
+            margin: auto;
+            margin-top: 50px;
+            position: relative;
+            padding: 0;
+            overflow: hidden;
+            background-image: url('background.jpg');
+        }
+
+        .cat,
+        .dog {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+        }
+
+        .cat {
+            left: 50px;
+            bottom: 50px;
+            background-image: url('cat.png');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            cursor: pointer;
+        }
+
+        .dog {
+            right: 50px;
+            bottom: 50px;
+            background-image: url('dog.png');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            cursor: pointer;
+        }
+
+        .ball {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            border-radius: 50%;
+            background-color: red;
+            font-size: 15px;
+            position: absolute;
+            transform: translate(-50%, 50%);
+            display: none;
+            left: 10px;
+        }
+
+        .wall {
+            width: 40px;
+            height: 200px;
+            position: absolute;
+            left: 380px;
+            bottom: 0px;
+            border: 1px solid black;
+        }
+
+        .catHPBox,
+        .dogHPBox {
+            width: 300px;
+            height: 20px;
+            position: absolute;
+            border: 1px solid black;
+            top: 20px;
+            overflow: hidden;
+        }
+
+        .catHPBox {
+            left: 20px;
+        }
+
+        .dogHPBox {
+            right: 20px;
+        }
+
+        .catHP,
+        .dogHP {
+            width: 300px;
+            height: 20px;
+            background-color: greenyellow;
+            transition: 1s;
+        }
+
+        .dogHP {
+            margin-left: auto;
+        }
+
+        .CorD {
+            text-align: center;
+            width: 150px;
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            margin: auto;
+            top: 175px;
+            text-align: center;
+            line-height: 30px;
+            border: black 1px solid;
+            background-color: white;
+            cursor: pointer;
+            padding-bottom: 10px;
+
+        }
+
+        .catF,
+        .dogF {
+            width: 100px;
+            margin:auto;
+            border: black 1px solid;
+        }
+
+        .catF:hover,
+        .dogF:hover {
+            background-color: #aaa;
+        }
+
+        .power {
+            width: 0px;
+            height: 10px;
+            bottom: 110px;
+            background-color: red;
+            position: absolute;
+            display: none;
+        }
+
+        .windBox {
+            position: absolute;
+            height: 20px;
+            width: 100px;
+            border: 3px solid rgb(255, 121, 72);
+            top: 40px;
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .wind {
+            height: 14px;
+            background-color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="cat"></div>
+        <div class="dog"></div>
+        <div class="ball"></div>
+        <div class="wall"></div>
+        <div class="catHPBox">
+            <div class="catHP"></div>
+        </div>
+        <div class="dogHPBox">
+            <div class="dogHP"></div>
+        </div>
+        <div class="power"></div>
+        <div class="CorD">Who goes first?
+
+            <div class="catF">Cat</div>
+            <div class="dogF">Dog</div>
+        </div>
+        <div class="windBox">
+            <div class="wind"></div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script>
+        var wind = 0;
+        var Fx = 0 + wind;
+        var Fy = 65;
+        var Bt = Fy / 4.9;
+        var ball = $('.ball');
+        var power;
+        //選擇先攻者
+        $('.catF').on('click', catToggle)
+        $('.dogF').on('click', dogToggle)
+        function catToggle() {
+            $('.CorD').hide();
+            $('.cat').on('mousedown', PowerCatS)
+            $('.cat').on('mouseup', PowerCatE)
+            ball.css({
+                left: '85px',
+                bottom: '65px',
+                display: 'block'
+            })
+            $('.power').css({
+                width: '0px',
+                left: '25px',
+                display: 'block'
+            })
+            var x = Math.random() * 20 - 10;
+            wind = x;
+            if (x >= 0) {
+                $('.wind').css({
+                    'margin-left': 'auto',
+                    'margin-right': '',
+                    'background-color': 'blue'
+                })
+            } else {
+                $('.wind').css({
+                    'margin-left': '',
+                    'margin-right': 'auto',
+                    'background-color': 'red'
+                })
+            }
+            $('.wind').css('width', Math.abs(x * 5) + 'px')
+        }
+        function dogToggle() {
+            $('.CorD').hide();
+            $('.dog').on('mousedown', PowerDogS)
+            $('.dog').on('mouseup', PowerDogE)
+            ball.css({
+                left: '715px',
+                bottom: '65px',
+                display: 'block'
+            })
+            $('.power').css({
+                width: '0px',
+                left: '675px',
+                display: 'block'
+            })
+            var x = Math.random() * 20-10;
+            wind = x;
+            if (x >= 0) {
+                $('.wind').css({
+                    'margin-left': '',
+                    'margin-right': 'auto',
+                    'background-color': 'blue'
+                })
+            } else {
+                $('.wind').css({
+                    'margin-left': 'auto',
+                    'margin-right': '',
+                    'background-color': 'red'
+                })
+            }
+            $('.wind').css('width', Math.abs(x * 5) + 'px')
+        }
+        //蓄力條
+        function PowerS() {
+            var w = 0;
+            power = setInterval(function () {
+                if ($('.power').width() >= 100) {
+                    w = -1;
+                } else if ($('.power').width() == 0) {
+                    w = 1;
+                }
+                $('.power').css('width', '+=' + w)
+            }, 15)
+
+        }
+        //貓蓄力
+        function PowerCatS() {
+            $('.cat').off('mousedown')
+            PowerS()
+        }
+        function PowerCatE() {
+            $('.cat').off('mouseup')
+            clearInterval(power)
+            Fx = 40 + wind + $('.power').width() / 5
+            catATK();
+        }
+        //貓咪攻擊
+        function catATK() {
+            var ballX, ballY;
+            var timer = 0;
+            setTimeout(function ballMove() {
+                timer += 0.1;
+                ball[0].style.left = (85 + Fx * timer) + 'px'
+                ball[0].style.bottom = (65 + (Fy - 4.9 * timer) * timer) + 'px'
+                ballX = ball[0].style.left.substring(0, ball[0].style.left.length - 2)
+                ballY = ball[0].style.bottom.substring(0, ball[0].style.bottom.length - 2)
+                if (ballX > 370 && ballX < 430 && ballY < 210) {
+                    setTimeout(function () {
+                        ball.css({
+                            left: '715px',
+                            bottom: '65px'
+                        })
+                        dogToggle()
+                    }, 1000)
+                } else if (ballX > 700 && ballX < 750 && ballY < 105 && ballY > 50) {
+                    $('.dogHP').css('width', '-=30')
+                    setTimeout(function () {
+                        ball.css({
+                            left: '715px',
+                            bottom: '65px'
+                        })
+                        dogToggle()
+                    }, 1000)
+                    setTimeout(function () {
+                        if ($('.dogHP').css('width') == '0px') {
+                            alert('cat is winner')
+                            newGame()
+                        }
+                    }, 1000)
+                } else if (ballY > 20) {
+                    setTimeout(ballMove, 10)
+                } else {
+                    setTimeout(function () {
+                        ball.css({
+                            left: '715px',
+                            bottom: '65px'
+                        })
+                        dogToggle()
+                    }, 1000)
+                }
+            }, 10)
+        }
+        //狗蓄力
+        function PowerDogS() {
+            $('.dog').off('mousedown')
+            PowerS();
+        }
+        function PowerDogE() {
+            $('.dog').off('mouseup')
+            clearInterval(power)
+            Fx = 40 + wind + $('.power').width() / 5
+            dogATK();
+        }
+        //狗狗攻擊
+        function dogATK() {
+            var ballX, ballY;
+            var timer = 0;
+            setTimeout(function ballMove() {
+                timer += 0.1;
+                ball.css({
+                    left: (715 - Fx * timer) + 'px',
+                    bottom: (65 + (Fy - 4.9 * timer) * timer) + 'px'
+                })
+                ballX = ball[0].style.left.substring(0, ball[0].style.left.length - 2)
+                ballY = ball[0].style.bottom.substring(0, ball[0].style.bottom.length - 2)
+                if (ballX > 370 && ballX < 430 && ballY < 210) {
+                    setTimeout(function () {
+                        ball.css({
+                            left: '85px',
+                            bottom: '65px'
+                        })
+                        catToggle()
+                    }, 1000)
+                } else if (ballX > 50 && ballX < 100 && ballY < 105 && ballY > 50) {
+                    $('.catHP').css('width', '-=30')
+                    setTimeout(function () {
+                        ball.css({
+                            left: '85px',
+                            bottom: '65px'
+                        })
+                        catToggle()
+                    }, 1000)
+                    setTimeout(function () {
+                        if ($('.catHP').css('width') == '0px') {
+                            alert('dog is winner')
+                            newGame()
+                        }
+                    }, 1000)
+                } else if (ballY > 20) {
+                    setTimeout(ballMove, 10)
+                } else {
+                    setTimeout(function () {
+                        ball.css({
+                            left: '85px',
+                            bottom: '65px'
+                        })
+                        catToggle()
+                    }, 1000)
+                }
+            }, 10)
+        }
+        //新遊戲
+        function newGame() {
+            $('.catHP').css('width', '300px')
+            $('.dogHP').css('width', '300px')
+            $('.cat').off('mousedown')
+            $('.cat').off('mouseup')
+            $('.dog').off('mousedown')
+            $('.dog').off('mouseup')
+            $('.CorD').show();
+        }
+
+
+    </script>
+</body>
+
+</html>
